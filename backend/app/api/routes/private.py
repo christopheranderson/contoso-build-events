@@ -3,7 +3,7 @@ from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from app.api.deps import SessionDep
+from app.api.deps import AsyncSessionDep
 from app.core.security import get_password_hash
 from app.models import (
     User,
@@ -21,7 +21,7 @@ class PrivateUserCreate(BaseModel):
 
 
 @router.post("/users/", response_model=UserPublic)
-def create_user(user_in: PrivateUserCreate, session: SessionDep) -> Any:
+async def create_user(user_in: PrivateUserCreate, session: AsyncSessionDep) -> Any:
     """
     Create a new user.
     """
@@ -33,6 +33,6 @@ def create_user(user_in: PrivateUserCreate, session: SessionDep) -> Any:
     )
 
     session.add(user)
-    session.commit()
+    await session.commit()
 
     return user

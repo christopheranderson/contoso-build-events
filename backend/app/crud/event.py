@@ -59,16 +59,22 @@ async def get_events(db: AsyncSession, skip: int = 0, limit: int = 10) -> Events
 
 
 # Add get_event_by_slug
-async def get_event_by_slug(db: AsyncSession, slug: str) -> Event | None:
-    result = await db.exec(select(Event).where(Event.slug == slug))
+async def get_event_by_slug(
+    db: AsyncSession, organization_slug: str, slug: str
+) -> Event | None:
+    result = await db.exec(
+        select(Event).where(
+            Event.organization.slug == organization_slug, Event.slug == slug
+        )
+    )
     return result.one_or_none()
 
 
 # Add update_event_by_slug
 async def update_event_by_slug(
-    db: AsyncSession, slug: str, obj_in: EventUpdate
+    db: AsyncSession, organization_slug: str, slug: str, obj_in: EventUpdate
 ) -> Event:
-    db_obj = await get_event_by_slug(db, slug)
+    db_obj = await get_event_by_slug(db, organization_slug, slug)
     if not db_obj:
         raise ValueError("Event not found")
     obj_data = db_obj.dict()
@@ -83,8 +89,10 @@ async def update_event_by_slug(
 
 
 # Add delete_event_by_slug
-async def delete_event_by_slug(db: AsyncSession, slug: str) -> None:
-    db_obj = await get_event_by_slug(db, slug)
+async def delete_event_by_slug(
+    db: AsyncSession, organization_slug: str, slug: str
+) -> None:
+    db_obj = await get_event_by_slug(db, organization_slug, slug)
     if db_obj:
         await db.delete(db_obj)
         await db.commit()
@@ -169,9 +177,13 @@ async def delete_event_registration(db: AsyncSession, id: UUID) -> None:
 
 
 # Add get_event_details_by_slug
-async def get_event_details_by_slug(db: AsyncSession, slug: str) -> EventDetails | None:
+async def get_event_details_by_slug(
+    db: AsyncSession, organization_slug: str, event_slug: str
+) -> EventDetails | None:
     result = await db.exec(
-        select(EventDetails).join(Event).where(Event.slug == slug)
+        select(EventDetails)
+        .join(Event)
+        .where(Event.organization.slug == organization_slug, Event.slug == event_slug)
     )
     return result.one_or_none()
 
@@ -180,10 +192,10 @@ async def get_event_details_by_slug(db: AsyncSession, slug: str) -> EventDetails
 async def get_events_by_organization_slug(
     db: AsyncSession, organization_slug: str, skip: int = 0, limit: int = 10
 ) -> list[Event]:
-    result = await db.execute(
+    result = await db.exec(
         select(Event)
-        .where(Event.organization_slug == organization_slug)
+        .where(Event.organization.slug == organization_slug)
         .offset(skip)
         .limit(limit)
     )
-    return result.scalars().all()
+    return list(result.all())

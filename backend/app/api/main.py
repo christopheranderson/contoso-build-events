@@ -2,7 +2,6 @@ from fastapi import APIRouter
 
 from app.api.routes import (
     events,
-    items,
     login,
     organizations,
     private,
@@ -18,6 +17,9 @@ api_router.include_router(users.router)
 api_router.include_router(organizations.router)
 api_router.include_router(events.router)
 api_router.include_router(sessions.router)
+api_router.include_router(utils.router)
+
+
 
 
 if settings.ENVIRONMENT == "local":

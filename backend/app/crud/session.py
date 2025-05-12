@@ -5,7 +5,6 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models import (
     Event,  # Import Event model
-    Organization,  # Import Organization model
     Session,
     SessionCreate,
     SessionRegistration,
@@ -71,12 +70,9 @@ async def get_session_by_slug(
     db: AsyncSession, organization_slug: str, event_slug: str, session_slug: str
 ) -> Session | None:
     result = await db.exec(
-        select(Session)
-        .join(Event, Event.id == Session.event_id)
-        .join(Organization, Organization.id == Event.organization_id)
-        .where(
-            Organization.slug == organization_slug,
-            Event.slug == event_slug,
+        select(Session).where(
+            Session.event.organization.slug == organization_slug,
+            Session.event.slug == event_slug,
             Session.slug == session_slug,
         )
     )
@@ -117,15 +113,17 @@ async def delete_session_by_slug(
 
 # Add list_sessions_by_event_slug
 async def list_sessions_by_event_slug(
-    db: AsyncSession, organization_slug: str, event_slug: str, skip: int = 0, limit: int = 10
+    db: AsyncSession,
+    organization_slug: str,
+    event_slug: str,
+    skip: int = 0,
+    limit: int = 10,
 ) -> Sessions:
     result = await db.exec(
         select(Session)
-        .join(Event, Event.id == Session.event_id)
-        .join(Organization, Organization.id == Event.organization_id)
         .where(
-            Organization.slug == organization_slug,
-            Event.slug == event_slug,
+            Session.event.organization.slug == organization_slug,
+            Session.event.slug == event_slug,
         )
         .offset(skip)
         .limit(limit)
@@ -134,11 +132,9 @@ async def list_sessions_by_event_slug(
     count_result = await db.exec(
         select(func.count())
         .select_from(Session)
-        .join(Event, Event.id == Session.event_id)
-        .join(Organization, Organization.id == Event.organization_id)
         .where(
-            Organization.slug == organization_slug,
-            Event.slug == event_slug,
+            Session.event.organization.slug == organization_slug,
+            Session.event.slug == event_slug,
         )
     )
     count = count_result.one_or_none() or 0
@@ -245,18 +241,12 @@ async def get_session_reviews(
 
 # Add submit_session method
 async def submit_session(
-    db: AsyncSession,
-    organization_slug: str,
-    event_slug: str,
-    session_in: SessionSubmit
+    db: AsyncSession, organization_slug: str, event_slug: str, session_in: SessionSubmit
 ) -> Session:
     # Fetch the event by organization and event slug
     event = await db.exec(
-        select(Event)
-        .join(Organization, Organization.id == Event.organization_id)
-        .where(
-            Organization.slug == organization_slug,
-            Event.slug == event_slug
+        select(Event).where(
+            Event.organization.slug == organization_slug, Event.slug == event_slug
         )
     )
     event = event.one_or_none()
@@ -271,7 +261,8 @@ async def submit_session(
         level=session_in.level,
         tags=session_in.tags,
         event_id=event.id,
-        status=SessionStatus.SUBMITTED
+        status=SessionStatus.SUBMITTED,
+        slug=session_in.title.replace(" ", "-").lower(),
     )
     db.add(db_obj)
     await db.commit()

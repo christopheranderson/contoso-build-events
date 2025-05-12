@@ -12,5 +12,5 @@ def create_random_item(db: Session) -> Item:
     assert owner_id is not None
     title = random_lower_string()
     description = random_lower_string()
-    item_in = ItemCreate(title=title, description=description)
+    item_in = ItemCreate(title=title, description=description, owner_id=owner_id)
     return crud.create_item(session=db, item_in=item_in, owner_id=owner_id)

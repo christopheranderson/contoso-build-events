@@ -1,4 +1,3 @@
-from .auth import *
 from .event import *
 from .item import *
 from .organization import *

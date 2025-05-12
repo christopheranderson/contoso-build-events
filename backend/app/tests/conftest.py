@@ -1,8 +1,9 @@
-from collections.abc import Generator
+from collections.abc import AsyncGenerator, Generator
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlmodel import Session, delete
+from sqlmodel import delete
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.config import settings
 from app.core.db import engine, init_db
@@ -13,19 +14,19 @@ from app.tests.utils.utils import get_superuser_token_headers
 
 
 @pytest.fixture(scope="session", autouse=True)
-def db() -> Generator[Session, None, None]:
-    with Session(engine) as session:
-        init_db(session)
+async def db() -> AsyncGenerator[AsyncSession, None]:
+    async with AsyncSession(engine) as session:
+        await init_db(session)
         yield session
         statement = delete(Item)
-        session.execute(statement)
+        await session.execute(statement)
         statement = delete(User)
-        session.execute(statement)
-        session.commit()
+        await session.execute(statement)
+        await session.commit()
 
 
 @pytest.fixture(scope="module")
-def client() -> Generator[TestClient, None, None]:
+def client() -> Generator[TestClient, None]:
     with TestClient(app) as c:
         yield c
 
@@ -36,7 +37,9 @@ def superuser_token_headers(client: TestClient) -> dict[str, str]:
 
 
 @pytest.fixture(scope="module")
-def normal_user_token_headers(client: TestClient, db: Session) -> dict[str, str]:
-    return authentication_token_from_email(
+async def normal_user_token_headers(
+    client: TestClient, db: AsyncSession
+) -> dict[str, str]:
+    return await authentication_token_from_email(
         client=client, email=settings.EMAIL_TEST_USER, db=db
     )

@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from sqlmodel import func as sqlmodel_func
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -10,7 +12,7 @@ from app.models import (
 )
 
 
-async def get_organization(db: AsyncSession, id: str) -> Organization | None:
+async def get_organization(db: AsyncSession, id: UUID) -> Organization | None:
     result = await db.exec(select(Organization).where(Organization.id == id))
     return result.one_or_none()
 
@@ -39,7 +41,7 @@ async def update_organization(
     return db_obj
 
 
-async def delete_organization(db: AsyncSession, id: str) -> None:
+async def delete_organization(db: AsyncSession, id: UUID) -> None:
     db_obj = await get_organization(db, id)
     if db_obj:
         await db.delete(db_obj)

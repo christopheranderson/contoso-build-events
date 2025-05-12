@@ -99,7 +99,9 @@ class EventBase(SQLModel):
     )  # Add organization name field
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-    slug: str = Field(max_length=255, unique=True, regex=r"^[a-z0-9-]+$")  # Add slug field
+    slug: str = Field(
+        max_length=255, unique=True, regex=r"^[a-z0-9-]+$"
+    )  # Add slug field
 
 
 # Properties to receive on event creation
@@ -121,7 +123,9 @@ class EventUpdate(SQLModel):
     organization_name: str | None = Field(
         default=None, max_length=255
     )  # Add organization name field
-    slug: str | None = Field(default=None, max_length=255, regex=r"^[a-z0-9-]+$")  # Add slug field
+    slug: str | None = Field(
+        default=None, max_length=255, regex=r"^[a-z0-9-]+$"
+    )  # Add slug field
 
 
 # Enum for registration status
@@ -205,7 +209,7 @@ class Events(SQLModel):
 
 # Shared properties
 class ItemBase(SQLModel):
-    id: UUID
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
     owner_id: UUID
     title: str = Field(min_length=1, max_length=255)
     description: str | None = Field(default=None, max_length=255)
@@ -253,7 +257,9 @@ class OrganizationBase(SQLModel):
     linkedin_link: str | None = None  # URL to LinkedIn profile
     github_link: str | None = None  # URL to GitHub profile
     readme: str | None = None  # Markdown-supported longer description
-    slug: str = Field(max_length=255, unique=True, regex=r"^[a-z0-9-]+$")  # Add slug field
+    slug: str = Field(
+        max_length=255, unique=True, regex=r"^[a-z0-9-]+$"
+    )  # Add slug field
 
 
 # Properties to receive on organization creation
@@ -271,7 +277,9 @@ class OrganizationUpdate(SQLModel):
     linkedin_link: str | None = None
     github_link: str | None = None
     readme: str | None = None
-    slug: str | None = Field(default=None, max_length=255, regex=r"^[a-z0-9-]+$")  # Add slug field
+    slug: str | None = Field(
+        default=None, max_length=255, regex=r"^[a-z0-9-]+$"
+    )  # Add slug field
 
 
 # Properties to return via API for listing organizations
@@ -328,25 +336,27 @@ class SessionBase(SQLModel):
     location: str | None = Field(
         default=None, max_length=255
     )  # Add optional location field
-    slug: str = Field(max_length=255, unique=True, regex=r"^[a-z0-9-]+$")  # Add slug field
+    slug: str = Field(
+        max_length=255, unique=True, regex=r"^[a-z0-9-]+$"
+    )  # Add slug field
 
 
 # Properties to receive on session creation
 class SessionCreate(SessionBase):
     event_id: UUID
 
+
 class SessionSubmit(SQLModel):
     title: str = Field(max_length=255)
     short_description: str | None = Field(
         default=None, max_length=255
     )  # Add short description
-    abstract: str | None = Field(
-        default=None, max_length=500
-    )
+    abstract: str | None = Field(default=None, max_length=500)
     level: SessionLevel = Field(default=SessionLevel.LEVEL_100)  # Add level field
     tags: list[str] = Field(
         default_factory=list, sa_column=Column(ARRAY(String))
     )  # Use JSON for list storage
+
 
 # Properties to receive on session update
 class SessionUpdate(SQLModel):
@@ -369,7 +379,9 @@ class SessionUpdate(SQLModel):
     location: str | None = Field(
         default=None, max_length=255
     )  # Add optional location field
-    slug: str | None = Field(default=None, max_length=255, regex=r"^[a-z0-9-]+$")  # Add slug field
+    slug: str | None = Field(
+        default=None, max_length=255, regex=r"^[a-z0-9-]+$"
+    )  # Add slug field
 
 
 # Enum for registration status
@@ -618,7 +630,9 @@ class Event(EventBase, table=True):
     organization: Organization = Relationship(
         back_populates="events"
     )  # Add relationship to Organization
-    slug: str = Field(max_length=255, unique=True, regex=r"^[a-z0-9-]+$")  # Add slug field
+    slug: str = Field(
+        max_length=255, unique=True, regex=r"^[a-z0-9-]+$"
+    )  # Add slug field
 
 
 # Database model for EventRegistration

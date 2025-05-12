@@ -1,6 +1,6 @@
 from faker import Faker
 from sqlalchemy.ext.asyncio import create_async_engine
-from sqlmodel import Session, SQLModel, create_engine, func, select
+from sqlmodel import func, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app import crud
@@ -61,7 +61,7 @@ async def initialize_with_sample_data(session: AsyncSession) -> None:
     await crud.organization.create_organization(db=session, obj_in=org_in)
 
     # Create 10 sample organizations
-    for i in range(1, 11):
+    for _ in range(1, 11):
         company_name = fake.company()
         org_in = OrganizationCreate(
             name=company_name,
