@@ -337,3 +337,36 @@ async def delete_event_registration_route(
         )
 
     await delete_event_registration(db, registration_id)
+
+
+@router.get("/events/{event_slug}", response_model=Event)
+async def read_event_by_slug(
+    event_slug: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Fetch an event by its slug.
+    """
+    # Fetch the event without requiring an organization_slug
+    event = await get_event_by_slug(
+        db, "", event_slug
+    )  # Pass an empty string for organization_slug
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    # Check if the event is private and the user has access
+    if event.is_private:
+        organization = await get_organization(db, event.organization_id)
+        if not organization:
+            raise HTTPException(status_code=404, detail="Organization not found")
+
+        if current_user.id not in [
+            admin.id for admin in organization.admins
+        ] and current_user.id not in [member.id for member in organization.members]:
+            raise HTTPException(
+                status_code=403,
+                detail="User is not authorized to view this private event",
+            )
+
+    return event

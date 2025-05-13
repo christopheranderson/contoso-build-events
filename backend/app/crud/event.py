@@ -62,11 +62,7 @@ async def get_events(db: AsyncSession, skip: int = 0, limit: int = 10) -> Events
 async def get_event_by_slug(
     db: AsyncSession, organization_slug: str, slug: str
 ) -> Event | None:
-    result = await db.exec(
-        select(Event).where(
-            Event.organization.slug == organization_slug, Event.slug == slug
-        )
-    )
+    result = await db.exec(select(Event).where(Event.slug == slug))
     return result.one_or_none()
 
 
@@ -180,12 +176,12 @@ async def delete_event_registration(db: AsyncSession, id: UUID) -> None:
 async def get_event_details_by_slug(
     db: AsyncSession, organization_slug: str, event_slug: str
 ) -> EventDetails | None:
-    result = await db.exec(
-        select(EventDetails)
-        .join(Event)
-        .where(Event.organization.slug == organization_slug, Event.slug == event_slug)
-    )
-    return result.one_or_none()
+    event = await get_event_by_slug(db, organization_slug, event_slug)
+
+    if not event:
+        return None
+
+    return event.details
 
 
 # Function to fetch events by organization slug

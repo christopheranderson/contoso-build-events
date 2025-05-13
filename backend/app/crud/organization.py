@@ -1,3 +1,4 @@
+import logging
 from uuid import UUID
 
 from sqlmodel import func as sqlmodel_func
@@ -10,6 +11,10 @@ from app.models import (
     OrganizationList,
     OrganizationUpdate,
 )
+
+logging.basicConfig()
+logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
+logging.getLogger("sqlalchemy.orm").setLevel(logging.INFO)
 
 
 async def get_organization(db: AsyncSession, id: UUID) -> Organization | None:
@@ -51,11 +56,14 @@ async def delete_organization(db: AsyncSession, id: UUID) -> None:
 async def list_organizations(
     db: AsyncSession, skip: int = 0, limit: int = 10
 ) -> OrganizationList:
+    print("Listing organizations")
     result = await db.exec(select(Organization).offset(skip).limit(limit))
+    print("Got organizations")
     organizations = result.all()
     count_result = await db.exec(
         select(sqlmodel_func.count()).select_from(Organization)
     )
+    print("Got count")
     count = count_result.one()
     return OrganizationList(data=organizations, count=count)
 
