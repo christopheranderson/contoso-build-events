@@ -9,30 +9,132 @@ export type Body_login_login_access_token = {
   client_secret?: string | null
 }
 
+export type Event = {
+  id?: string
+  name: string
+  short_description?: string | null
+  description?: string | null
+  start_time?: string
+  end_time?: string
+  event_type?: EventType
+  is_private?: boolean
+  organization_name?: string | null
+  created_at?: string
+  updated_at?: string
+  slug: string
+  address_id: string
+  organization_id: string
+}
+
+export type EventCreate = {
+  id?: string
+  name: string
+  short_description?: string | null
+  description?: string | null
+  start_time?: string
+  end_time?: string
+  event_type?: EventType
+  is_private?: boolean
+  organization_name?: string | null
+  created_at?: string
+  updated_at?: string
+  slug: string
+}
+
+export type EventDetails = {
+  readme?: string | null
+  code_of_conduct?: string | null
+  sponsors?: string | null
+  info_for_speakers?: string | null
+  info_for_sponsors?: string | null
+  info_for_staff?: string | null
+  contact_info?: string | null
+  resources?: string | null
+  updated_at?: string
+  id?: string
+  event_id: string
+}
+
+export type EventDetailsCreate = {
+  readme?: string | null
+  code_of_conduct?: string | null
+  sponsors?: string | null
+  info_for_speakers?: string | null
+  info_for_sponsors?: string | null
+  info_for_staff?: string | null
+  contact_info?: string | null
+  resources?: string | null
+  updated_at?: string
+}
+
+export type EventDetailsUpdate = {
+  readme?: string | null
+  code_of_conduct?: string | null
+  sponsors?: string | null
+  info_for_speakers?: string | null
+  info_for_sponsors?: string | null
+  info_for_staff?: string | null
+  contact_info?: string | null
+  resources?: string | null
+}
+
+export type EventRegistration = {
+  event_id: string
+  user_id: string
+  status?: EventRegistrationStatus
+  cancellation_reason?: string | null
+  is_speaker?: boolean
+  is_organizer?: boolean
+  is_sponsor?: boolean
+  is_student?: boolean
+  is_staff?: boolean
+  created_at?: string
+  updated_at?: string
+  id?: string
+}
+
+export type EventRegistrationCreate = {
+  event_id: string
+  user_id: string
+  status?: EventRegistrationStatus
+  cancellation_reason?: string | null
+  is_speaker?: boolean
+  is_organizer?: boolean
+  is_sponsor?: boolean
+  is_student?: boolean
+  is_staff?: boolean
+  created_at?: string
+  updated_at?: string
+}
+
+export type EventRegistrationStatus = "pending" | "accepted" | "canceled"
+
+export type EventRegistrationUpdate = {
+  status?: EventRegistrationStatus | null
+  cancellation_reason?: string | null
+  is_speaker?: boolean | null
+  is_organizer?: boolean | null
+  is_sponsor?: boolean | null
+  is_student?: boolean | null
+  is_staff?: boolean | null
+}
+
+export type EventType = "virtual" | "in_person" | "hybrid"
+
+export type EventUpdate = {
+  name?: string | null
+  short_description?: string | null
+  description?: string | null
+  start_time?: string | null
+  end_time?: string | null
+  event_type?: EventType | null
+  is_private?: boolean | null
+  organization_name?: string | null
+  slug?: string | null
+}
+
 export type HTTPValidationError = {
   detail?: Array<ValidationError>
-}
-
-export type ItemCreate = {
-  title: string
-  description?: string | null
-}
-
-export type ItemPublic = {
-  title: string
-  description?: string | null
-  id: string
-  owner_id: string
-}
-
-export type ItemsPublic = {
-  data: Array<ItemPublic>
-  count: number
-}
-
-export type ItemUpdate = {
-  title?: string | null
-  description?: string | null
 }
 
 export type Message = {
@@ -44,11 +146,116 @@ export type NewPassword = {
   new_password: string
 }
 
+export type Organization = {
+  id?: string
+  name: string
+  display_name?: string | null
+  short_description: string
+  profile_picture?: string | null
+  profile_banner?: string | null
+  contact_email?: string | null
+  linkedin_link?: string | null
+  github_link?: string | null
+  readme?: string | null
+  slug: string
+}
+
+export type OrganizationBase = {
+  id?: string
+  name: string
+  display_name?: string | null
+  short_description: string
+  profile_picture?: string | null
+  profile_banner?: string | null
+  contact_email?: string | null
+  linkedin_link?: string | null
+  github_link?: string | null
+  readme?: string | null
+  slug: string
+}
+
+export type OrganizationCreate = {
+  id?: string
+  name: string
+  display_name?: string | null
+  short_description: string
+  profile_picture?: string | null
+  profile_banner?: string | null
+  contact_email?: string | null
+  linkedin_link?: string | null
+  github_link?: string | null
+  readme?: string | null
+  slug: string
+}
+
+export type OrganizationList = {
+  data: Array<OrganizationBase>
+  count: number
+}
+
+export type OrganizationUpdate = {
+  name?: string | null
+  short_description?: string | null
+  profile_picture?: string | null
+  profile_banner?: string | null
+  contact_email?: string | null
+  linkedin_link?: string | null
+  github_link?: string | null
+  readme?: string | null
+  slug?: string | null
+}
+
 export type PrivateUserCreate = {
   email: string
   password: string
   full_name: string
   is_verified?: boolean
+}
+
+export type Session = {
+  id?: string
+  title: string
+  short_description?: string | null
+  abstract?: string | null
+  start_time?: string
+  end_time?: string
+  status?: SessionStatus
+  cancellation_reason?: string | null
+  tags?: Array<string>
+  level?: SessionLevel
+  session_type?: SessionType
+  location?: string | null
+  slug: string
+  event_id: string
+}
+
+export type SessionLevel = 100 | 200 | 300 | 400
+
+export type SessionStatus = "submitted" | "approved" | "cancelled"
+
+export type SessionSubmit = {
+  title: string
+  short_description?: string | null
+  abstract?: string | null
+  level?: SessionLevel
+  tags?: Array<string>
+}
+
+export type SessionType = "virtual" | "in_person" | "hybrid"
+
+export type SessionUpdate = {
+  title?: string | null
+  short_description?: string | null
+  abstract?: string | null
+  start_time?: string | null
+  end_time?: string | null
+  status?: SessionStatus | null
+  cancellation_reason?: string | null
+  tags?: Array<string> | null
+  level?: SessionLevel | null
+  session_type?: SessionType | null
+  location?: string | null
+  slug?: string | null
 }
 
 export type Token = {
@@ -61,7 +268,16 @@ export type UpdatePassword = {
   new_password: string
 }
 
+export type UserBase = {
+  id?: string
+  email: string
+  is_active?: boolean
+  is_superuser?: boolean
+  full_name?: string | null
+}
+
 export type UserCreate = {
+  id?: string
   email: string
   is_active?: boolean
   is_superuser?: boolean
@@ -70,11 +286,11 @@ export type UserCreate = {
 }
 
 export type UserPublic = {
+  id?: string
   email: string
   is_active?: boolean
   is_superuser?: boolean
   full_name?: string | null
-  id: string
 }
 
 export type UserRegister = {
@@ -84,11 +300,12 @@ export type UserRegister = {
 }
 
 export type UsersPublic = {
-  data: Array<UserPublic>
+  data: Array<UserBase>
   count: number
 }
 
 export type UserUpdate = {
+  id?: string
   email?: string | null
   is_active?: boolean
   is_superuser?: boolean
@@ -107,37 +324,97 @@ export type ValidationError = {
   type: string
 }
 
-export type ItemsReadItemsData = {
+export type EventsReadEventsData = {
   limit?: number
+  organizationSlug: string
   skip?: number
 }
 
-export type ItemsReadItemsResponse = ItemsPublic
+export type EventsReadEventsResponse = Array<Event>
 
-export type ItemsCreateItemData = {
-  requestBody: ItemCreate
+export type EventsCreateNewEventData = {
+  organizationSlug: string
+  requestBody: EventCreate
 }
 
-export type ItemsCreateItemResponse = ItemPublic
+export type EventsCreateNewEventResponse = Event
 
-export type ItemsReadItemData = {
-  id: string
+export type EventsUpdateExistingEventData = {
+  eventSlug: string
+  organizationSlug: string
+  requestBody: EventUpdate
 }
 
-export type ItemsReadItemResponse = ItemPublic
+export type EventsUpdateExistingEventResponse = Event
 
-export type ItemsUpdateItemData = {
-  id: string
-  requestBody: ItemUpdate
+export type EventsDeleteExistingEventData = {
+  eventSlug: string
+  organizationSlug: string
 }
 
-export type ItemsUpdateItemResponse = ItemPublic
+export type EventsDeleteExistingEventResponse = void
 
-export type ItemsDeleteItemData = {
-  id: string
+export type EventsReadEventDetailsData = {
+  eventSlug: string
+  organizationSlug: string
 }
 
-export type ItemsDeleteItemResponse = Message
+export type EventsReadEventDetailsResponse = EventDetails
+
+export type EventsCreateEventDetailsRouteData = {
+  eventSlug: string
+  organizationSlug: string
+  requestBody: EventDetailsCreate
+}
+
+export type EventsCreateEventDetailsRouteResponse = EventDetails
+
+export type EventsUpdateEventDetailsRouteData = {
+  eventSlug: string
+  organizationSlug: string
+  requestBody: EventDetailsUpdate
+}
+
+export type EventsUpdateEventDetailsRouteResponse = EventDetails
+
+export type EventsReadEventRegistrationData = {
+  eventSlug: string
+  organizationSlug: string
+  registrationId: string
+}
+
+export type EventsReadEventRegistrationResponse = EventRegistration
+
+export type EventsUpdateEventRegistrationRouteData = {
+  eventSlug: string
+  organizationSlug: string
+  registrationId: string
+  requestBody: EventRegistrationUpdate
+}
+
+export type EventsUpdateEventRegistrationRouteResponse = EventRegistration
+
+export type EventsDeleteEventRegistrationRouteData = {
+  eventSlug: string
+  organizationSlug: string
+  registrationId: string
+}
+
+export type EventsDeleteEventRegistrationRouteResponse = void
+
+export type EventsCreateEventRegistrationRouteData = {
+  eventSlug: string
+  organizationSlug: string
+  requestBody: EventRegistrationCreate
+}
+
+export type EventsCreateEventRegistrationRouteResponse = EventRegistration
+
+export type EventsReadEventBySlugData = {
+  eventSlug: string
+}
+
+export type EventsReadEventBySlugResponse = Event
 
 export type LoginLoginAccessTokenData = {
   formData: Body_login_login_access_token
@@ -165,11 +442,85 @@ export type LoginRecoverPasswordHtmlContentData = {
 
 export type LoginRecoverPasswordHtmlContentResponse = string
 
+export type OrganizationsListOrganizationsRouteData = {
+  limit?: number
+  skip?: number
+}
+
+export type OrganizationsListOrganizationsRouteResponse = OrganizationList
+
+export type OrganizationsCreateOrganizationRouteData = {
+  requestBody: OrganizationCreate
+}
+
+export type OrganizationsCreateOrganizationRouteResponse = Organization
+
+export type OrganizationsGetOrganizationRouteData = {
+  organizationSlug: string
+}
+
+export type OrganizationsGetOrganizationRouteResponse = Organization
+
+export type OrganizationsUpdateOrganizationRouteData = {
+  organizationSlug: string
+  requestBody: OrganizationUpdate
+}
+
+export type OrganizationsUpdateOrganizationRouteResponse = Organization
+
+export type OrganizationsDeleteOrganizationRouteData = {
+  organizationSlug: string
+}
+
+export type OrganizationsDeleteOrganizationRouteResponse = void
+
 export type PrivateCreateUserData = {
   requestBody: PrivateUserCreate
 }
 
 export type PrivateCreateUserResponse = UserPublic
+
+export type SessionsReadSessionsData = {
+  eventSlug: string
+  limit?: number
+  organizationSlug: string
+  skip?: number
+}
+
+export type SessionsReadSessionsResponse = Array<Session>
+
+export type SessionsReadSessionData = {
+  eventSlug: string
+  organizationSlug: string
+  sessionSlug: string
+}
+
+export type SessionsReadSessionResponse = Session
+
+export type SessionsUpdateSessionRouteData = {
+  eventSlug: string
+  organizationSlug: string
+  requestBody: SessionUpdate
+  sessionSlug: string
+}
+
+export type SessionsUpdateSessionRouteResponse = Session
+
+export type SessionsDeleteSessionRouteData = {
+  eventSlug: string
+  organizationSlug: string
+  sessionSlug: string
+}
+
+export type SessionsDeleteSessionRouteResponse = void
+
+export type SessionsSubmitSessionRouteData = {
+  eventSlug: string
+  organizationSlug: string
+  requestBody: SessionSubmit
+}
+
+export type SessionsSubmitSessionRouteResponse = Session
 
 export type UsersReadUsersData = {
   limit?: number

@@ -21,7 +21,7 @@ export const UserActionsMenu = ({ user, disabled }: UserActionsMenuProps) => {
       </MenuTrigger>
       <MenuContent>
         <EditUser user={user} />
-        <DeleteUser id={user.id} />
+        <DeleteUser id={user.id!} />
       </MenuContent>
     </MenuRoot>
   )

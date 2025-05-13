@@ -4,6 +4,7 @@ import {
   DialogActionTrigger,
   Input,
   Text,
+  Textarea,
   VStack,
 } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -11,7 +12,7 @@ import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 import { FaExchangeAlt } from "react-icons/fa"
 
-import { type ApiError, type ItemPublic, ItemsService } from "@/client"
+import { type ApiError, type Organization, OrganizationsService, OrganizationUpdate } from "@/client"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 import {
@@ -26,16 +27,11 @@ import {
 } from "../ui/dialog"
 import { Field } from "../ui/field"
 
-interface EditItemProps {
-  item: ItemPublic
+interface EditOrganizationProps {
+  organization: Organization
 }
 
-interface ItemUpdateForm {
-  title: string
-  description?: string
-}
-
-const EditItem = ({ item }: EditItemProps) => {
+const EditOrganization = ({ organization }: EditOrganizationProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const queryClient = useQueryClient()
   const { showSuccessToast } = useCustomToast()
@@ -44,20 +40,19 @@ const EditItem = ({ item }: EditItemProps) => {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ItemUpdateForm>({
+  } = useForm<OrganizationUpdate>({
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
-      ...item,
-      description: item.description ?? undefined,
+      ...organization,
     },
   })
 
   const mutation = useMutation({
-    mutationFn: (data: ItemUpdateForm) =>
-      ItemsService.updateItem({ id: item.id, requestBody: data }),
+    mutationFn: (data: OrganizationUpdate) =>
+      OrganizationsService.updateOrganizationRoute({organizationSlug: organization.slug, requestBody: data}),
     onSuccess: () => {
-      showSuccessToast("Item updated successfully.")
+      showSuccessToast("Organization updated successfully.")
       reset()
       setIsOpen(false)
     },
@@ -65,11 +60,11 @@ const EditItem = ({ item }: EditItemProps) => {
       handleError(err)
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["items"] })
+      queryClient.invalidateQueries({ queryKey: ["organizations"] })
     },
   })
 
-  const onSubmit: SubmitHandler<ItemUpdateForm> = async (data) => {
+  const onSubmit: SubmitHandler<OrganizationUpdate> = async (data) => {
     mutation.mutate(data)
   }
 
@@ -83,43 +78,69 @@ const EditItem = ({ item }: EditItemProps) => {
       <DialogTrigger asChild>
         <Button variant="ghost">
           <FaExchangeAlt fontSize="16px" />
-          Edit Item
+          Edit Organization
         </Button>
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
-            <DialogTitle>Edit Item</DialogTitle>
+            <DialogTitle>Edit Organization</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <Text mb={4}>Update the item details below.</Text>
+            <Text mb={4}>Update the organization details below.</Text>
             <VStack gap={4}>
               <Field
                 required
-                invalid={!!errors.title}
-                errorText={errors.title?.message}
-                label="Title"
+                invalid={!!errors.name}
+                errorText={errors.name?.message}
+                label="Name"
               >
                 <Input
-                  id="title"
-                  {...register("title", {
-                    required: "Title is required",
+                  id="name"
+                  {...register("name", {
+                    required: "Name is required",
                   })}
-                  placeholder="Title"
+                  placeholder="Name"
                   type="text"
                 />
               </Field>
 
               <Field
-                invalid={!!errors.description}
-                errorText={errors.description?.message}
+                invalid={!!errors.short_description}
+                errorText={errors.short_description?.message}
                 label="Description"
               >
                 <Input
-                  id="description"
-                  {...register("description")}
-                  placeholder="Description"
+                  id="short_description"
+                  {...register("short_description")}
+                  placeholder="Enter a short description"
                   type="text"
+                />
+              </Field>
+
+              <Field
+                invalid={!!errors.contact_email}
+                errorText={errors.contact_email?.message}
+                label="Contact Email"
+              >
+                <Input
+                  id="contact_email"
+                  {...register("contact_email")}
+                  placeholder="Enter a contact email"
+                  type="email"
+                />
+              </Field>
+
+              <Field
+                invalid={!!errors.readme}
+                errorText={errors.readme?.message}
+                label="Readme"
+              >
+                <Textarea
+                  id="readme"
+                  {...register("readme")}
+                  placeholder="Enter a readme"
+                  autoresize
                 />
               </Field>
             </VStack>
@@ -148,4 +169,4 @@ const EditItem = ({ item }: EditItemProps) => {
   )
 }
 
-export default EditItem
+export default EditOrganization

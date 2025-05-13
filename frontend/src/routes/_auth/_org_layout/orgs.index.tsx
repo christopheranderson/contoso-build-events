@@ -11,10 +11,10 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { FiSearch } from "react-icons/fi"
 import { z } from "zod"
 
-import { ItemsService } from "@/client"
-import { ItemActionsMenu } from "@/components/Common/ItemActionsMenu"
-import AddItem from "@/components/Items/AddItem"
-import PendingItems from "@/components/Pending/PendingItems"
+import { OrganizationsService } from "@/client"
+import { OrganizationActionsMenu } from "@/components/Common/OrganizationActionsMenu"
+import AddOrganization from "@/components/Organizations/Add"
+import PendingOrganizations from "@/components/Pending/PendingOrganizations"
 import {
   PaginationItems,
   PaginationNextTrigger,
@@ -22,31 +22,31 @@ import {
   PaginationRoot,
 } from "@/components/ui/pagination.tsx"
 
-const itemsSearchSchema = z.object({
+const organizationsSearchSchema = z.object({
   page: z.number().catch(1),
 })
 
-const PER_PAGE = 5
+const PER_PAGE = 10
 
-function getItemsQueryOptions({ page }: { page: number }) {
+function getOrganizationsQueryOptions({ page }: { page: number }) {
   return {
     queryFn: () =>
-      ItemsService.readItems({ skip: (page - 1) * PER_PAGE, limit: PER_PAGE }),
-    queryKey: ["items", { page }],
+      OrganizationsService.listOrganizationsRoute({ skip: (page - 1) * PER_PAGE, limit: PER_PAGE }),
+    queryKey: ["organizations", { page }],
   }
 }
 
-export const Route = createFileRoute("/_layout/items")({
-  component: Items,
-  validateSearch: (search) => itemsSearchSchema.parse(search),
+export const Route = createFileRoute("/_auth/_org_layout/orgs/")({
+  component: Organizations,
+  validateSearch: (search) => organizationsSearchSchema.parse(search),
 })
 
-function ItemsTable() {
+function OrganizationsTable() {
   const navigate = useNavigate({ from: Route.fullPath })
   const { page } = Route.useSearch()
 
   const { data, isLoading, isPlaceholderData } = useQuery({
-    ...getItemsQueryOptions({ page }),
+    ...getOrganizationsQueryOptions({ page }),
     placeholderData: (prevData) => prevData,
   })
 
@@ -55,14 +55,14 @@ function ItemsTable() {
       search: (prev: { [key: string]: string }) => ({ ...prev, page }),
     })
 
-  const items = data?.data.slice(0, PER_PAGE) ?? []
+  const organizations = data?.data.slice(0, PER_PAGE) ?? []
   const count = data?.count ?? 0
 
   if (isLoading) {
-    return <PendingItems />
+    return <PendingOrganizations />
   }
 
-  if (items.length === 0) {
+  if (organizations.length === 0) {
     return (
       <EmptyState.Root>
         <EmptyState.Content>
@@ -70,9 +70,9 @@ function ItemsTable() {
             <FiSearch />
           </EmptyState.Indicator>
           <VStack textAlign="center">
-            <EmptyState.Title>You don't have any items yet</EmptyState.Title>
+            <EmptyState.Title>You don't have any organizations yet</EmptyState.Title>
             <EmptyState.Description>
-              Add a new item to get started
+              Add a new organization to get started
             </EmptyState.Description>
           </VStack>
         </EmptyState.Content>
@@ -85,30 +85,26 @@ function ItemsTable() {
       <Table.Root size={{ base: "sm", md: "md" }}>
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeader w="sm">ID</Table.ColumnHeader>
-            <Table.ColumnHeader w="sm">Title</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm">Name</Table.ColumnHeader>
             <Table.ColumnHeader w="sm">Description</Table.ColumnHeader>
             <Table.ColumnHeader w="sm">Actions</Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {items?.map((item) => (
-            <Table.Row key={item.id} opacity={isPlaceholderData ? 0.5 : 1}>
+          {organizations?.map((organization) => (
+            <Table.Row key={organization.id} opacity={isPlaceholderData ? 0.5 : 1}>
               <Table.Cell truncate maxW="sm">
-                {item.id}
-              </Table.Cell>
-              <Table.Cell truncate maxW="sm">
-                {item.title}
+                {organization.display_name}
               </Table.Cell>
               <Table.Cell
-                color={!item.description ? "gray" : "inherit"}
+                color={!organization.short_description ? "gray" : "inherit"}
                 truncate
                 maxW="30%"
               >
-                {item.description || "N/A"}
+                {organization.short_description || "N/A"}
               </Table.Cell>
               <Table.Cell>
-                <ItemActionsMenu item={item} />
+                <OrganizationActionsMenu organization={organization} />
               </Table.Cell>
             </Table.Row>
           ))}
@@ -131,14 +127,14 @@ function ItemsTable() {
   )
 }
 
-function Items() {
+function Organizations() {
   return (
     <Container maxW="full">
       <Heading size="lg" pt={12}>
-        Items Management
+        Organizations Management
       </Heading>
-      <AddItem />
-      <ItemsTable />
+      <AddOrganization />
+      <OrganizationsTable />
     </Container>
   )
 }

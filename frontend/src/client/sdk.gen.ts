@@ -4,16 +4,30 @@ import type { CancelablePromise } from "./core/CancelablePromise"
 import { OpenAPI } from "./core/OpenAPI"
 import { request as __request } from "./core/request"
 import type {
-  ItemsReadItemsData,
-  ItemsReadItemsResponse,
-  ItemsCreateItemData,
-  ItemsCreateItemResponse,
-  ItemsReadItemData,
-  ItemsReadItemResponse,
-  ItemsUpdateItemData,
-  ItemsUpdateItemResponse,
-  ItemsDeleteItemData,
-  ItemsDeleteItemResponse,
+  EventsReadEventsData,
+  EventsReadEventsResponse,
+  EventsCreateNewEventData,
+  EventsCreateNewEventResponse,
+  EventsUpdateExistingEventData,
+  EventsUpdateExistingEventResponse,
+  EventsDeleteExistingEventData,
+  EventsDeleteExistingEventResponse,
+  EventsReadEventDetailsData,
+  EventsReadEventDetailsResponse,
+  EventsCreateEventDetailsRouteData,
+  EventsCreateEventDetailsRouteResponse,
+  EventsUpdateEventDetailsRouteData,
+  EventsUpdateEventDetailsRouteResponse,
+  EventsReadEventRegistrationData,
+  EventsReadEventRegistrationResponse,
+  EventsUpdateEventRegistrationRouteData,
+  EventsUpdateEventRegistrationRouteResponse,
+  EventsDeleteEventRegistrationRouteData,
+  EventsDeleteEventRegistrationRouteResponse,
+  EventsCreateEventRegistrationRouteData,
+  EventsCreateEventRegistrationRouteResponse,
+  EventsReadEventBySlugData,
+  EventsReadEventBySlugResponse,
   LoginLoginAccessTokenData,
   LoginLoginAccessTokenResponse,
   LoginTestTokenResponse,
@@ -23,8 +37,28 @@ import type {
   LoginResetPasswordResponse,
   LoginRecoverPasswordHtmlContentData,
   LoginRecoverPasswordHtmlContentResponse,
+  OrganizationsListOrganizationsRouteData,
+  OrganizationsListOrganizationsRouteResponse,
+  OrganizationsCreateOrganizationRouteData,
+  OrganizationsCreateOrganizationRouteResponse,
+  OrganizationsGetOrganizationRouteData,
+  OrganizationsGetOrganizationRouteResponse,
+  OrganizationsUpdateOrganizationRouteData,
+  OrganizationsUpdateOrganizationRouteResponse,
+  OrganizationsDeleteOrganizationRouteData,
+  OrganizationsDeleteOrganizationRouteResponse,
   PrivateCreateUserData,
   PrivateCreateUserResponse,
+  SessionsReadSessionsData,
+  SessionsReadSessionsResponse,
+  SessionsReadSessionData,
+  SessionsReadSessionResponse,
+  SessionsUpdateSessionRouteData,
+  SessionsUpdateSessionRouteResponse,
+  SessionsDeleteSessionRouteData,
+  SessionsDeleteSessionRouteResponse,
+  SessionsSubmitSessionRouteData,
+  SessionsSubmitSessionRouteResponse,
   UsersReadUsersData,
   UsersReadUsersResponse,
   UsersCreateUserData,
@@ -48,22 +82,25 @@ import type {
   UtilsHealthCheckResponse,
 } from "./types.gen"
 
-export class ItemsService {
+export class EventsService {
   /**
-   * Read Items
-   * Retrieve items.
+   * Read Events
    * @param data The data for the request.
+   * @param data.organizationSlug
    * @param data.skip
    * @param data.limit
-   * @returns ItemsPublic Successful Response
+   * @returns Event Successful Response
    * @throws ApiError
    */
-  public static readItems(
-    data: ItemsReadItemsData = {},
-  ): CancelablePromise<ItemsReadItemsResponse> {
+  public static readEvents(
+    data: EventsReadEventsData,
+  ): CancelablePromise<EventsReadEventsResponse> {
     return __request(OpenAPI, {
       method: "GET",
-      url: "/api/v1/items/",
+      url: "/api/v1/orgs/{organization_slug}/e/",
+      path: {
+        organization_slug: data.organizationSlug,
+      },
       query: {
         skip: data.skip,
         limit: data.limit,
@@ -75,19 +112,22 @@ export class ItemsService {
   }
 
   /**
-   * Create Item
-   * Create new item.
+   * Create New Event
    * @param data The data for the request.
+   * @param data.organizationSlug
    * @param data.requestBody
-   * @returns ItemPublic Successful Response
+   * @returns Event Successful Response
    * @throws ApiError
    */
-  public static createItem(
-    data: ItemsCreateItemData,
-  ): CancelablePromise<ItemsCreateItemResponse> {
+  public static createNewEvent(
+    data: EventsCreateNewEventData,
+  ): CancelablePromise<EventsCreateNewEventResponse> {
     return __request(OpenAPI, {
       method: "POST",
-      url: "/api/v1/items/",
+      url: "/api/v1/orgs/{organization_slug}/e/",
+      path: {
+        organization_slug: data.organizationSlug,
+      },
       body: data.requestBody,
       mediaType: "application/json",
       errors: {
@@ -97,45 +137,23 @@ export class ItemsService {
   }
 
   /**
-   * Read Item
-   * Get item by ID.
+   * Update Existing Event
    * @param data The data for the request.
-   * @param data.id
-   * @returns ItemPublic Successful Response
-   * @throws ApiError
-   */
-  public static readItem(
-    data: ItemsReadItemData,
-  ): CancelablePromise<ItemsReadItemResponse> {
-    return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/items/{id}",
-      path: {
-        id: data.id,
-      },
-      errors: {
-        422: "Validation Error",
-      },
-    })
-  }
-
-  /**
-   * Update Item
-   * Update an item.
-   * @param data The data for the request.
-   * @param data.id
+   * @param data.organizationSlug
+   * @param data.eventSlug
    * @param data.requestBody
-   * @returns ItemPublic Successful Response
+   * @returns Event Successful Response
    * @throws ApiError
    */
-  public static updateItem(
-    data: ItemsUpdateItemData,
-  ): CancelablePromise<ItemsUpdateItemResponse> {
+  public static updateExistingEvent(
+    data: EventsUpdateExistingEventData,
+  ): CancelablePromise<EventsUpdateExistingEventResponse> {
     return __request(OpenAPI, {
       method: "PUT",
-      url: "/api/v1/items/{id}",
+      url: "/api/v1/orgs/{organization_slug}/e/{event_slug}",
       path: {
-        id: data.id,
+        organization_slug: data.organizationSlug,
+        event_slug: data.eventSlug,
       },
       body: data.requestBody,
       mediaType: "application/json",
@@ -146,21 +164,231 @@ export class ItemsService {
   }
 
   /**
-   * Delete Item
-   * Delete an item.
+   * Delete Existing Event
    * @param data The data for the request.
-   * @param data.id
-   * @returns Message Successful Response
+   * @param data.organizationSlug
+   * @param data.eventSlug
+   * @returns void Successful Response
    * @throws ApiError
    */
-  public static deleteItem(
-    data: ItemsDeleteItemData,
-  ): CancelablePromise<ItemsDeleteItemResponse> {
+  public static deleteExistingEvent(
+    data: EventsDeleteExistingEventData,
+  ): CancelablePromise<EventsDeleteExistingEventResponse> {
     return __request(OpenAPI, {
       method: "DELETE",
-      url: "/api/v1/items/{id}",
+      url: "/api/v1/orgs/{organization_slug}/e/{event_slug}",
       path: {
-        id: data.id,
+        organization_slug: data.organizationSlug,
+        event_slug: data.eventSlug,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Read Event Details
+   * @param data The data for the request.
+   * @param data.organizationSlug
+   * @param data.eventSlug
+   * @returns EventDetails Successful Response
+   * @throws ApiError
+   */
+  public static readEventDetails(
+    data: EventsReadEventDetailsData,
+  ): CancelablePromise<EventsReadEventDetailsResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/orgs/{organization_slug}/e/{event_slug}/details",
+      path: {
+        organization_slug: data.organizationSlug,
+        event_slug: data.eventSlug,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Create Event Details Route
+   * @param data The data for the request.
+   * @param data.organizationSlug
+   * @param data.eventSlug
+   * @param data.requestBody
+   * @returns EventDetails Successful Response
+   * @throws ApiError
+   */
+  public static createEventDetailsRoute(
+    data: EventsCreateEventDetailsRouteData,
+  ): CancelablePromise<EventsCreateEventDetailsRouteResponse> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/orgs/{organization_slug}/e/{event_slug}/details",
+      path: {
+        organization_slug: data.organizationSlug,
+        event_slug: data.eventSlug,
+      },
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Update Event Details Route
+   * @param data The data for the request.
+   * @param data.organizationSlug
+   * @param data.eventSlug
+   * @param data.requestBody
+   * @returns EventDetails Successful Response
+   * @throws ApiError
+   */
+  public static updateEventDetailsRoute(
+    data: EventsUpdateEventDetailsRouteData,
+  ): CancelablePromise<EventsUpdateEventDetailsRouteResponse> {
+    return __request(OpenAPI, {
+      method: "PUT",
+      url: "/api/v1/orgs/{organization_slug}/e/{event_slug}/details",
+      path: {
+        organization_slug: data.organizationSlug,
+        event_slug: data.eventSlug,
+      },
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Read Event Registration
+   * @param data The data for the request.
+   * @param data.organizationSlug
+   * @param data.eventSlug
+   * @param data.registrationId
+   * @returns EventRegistration Successful Response
+   * @throws ApiError
+   */
+  public static readEventRegistration(
+    data: EventsReadEventRegistrationData,
+  ): CancelablePromise<EventsReadEventRegistrationResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/orgs/{organization_slug}/e/{event_slug}/registrations/{registration_id}",
+      path: {
+        organization_slug: data.organizationSlug,
+        event_slug: data.eventSlug,
+        registration_id: data.registrationId,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Update Event Registration Route
+   * @param data The data for the request.
+   * @param data.organizationSlug
+   * @param data.eventSlug
+   * @param data.registrationId
+   * @param data.requestBody
+   * @returns EventRegistration Successful Response
+   * @throws ApiError
+   */
+  public static updateEventRegistrationRoute(
+    data: EventsUpdateEventRegistrationRouteData,
+  ): CancelablePromise<EventsUpdateEventRegistrationRouteResponse> {
+    return __request(OpenAPI, {
+      method: "PUT",
+      url: "/api/v1/orgs/{organization_slug}/e/{event_slug}/registrations/{registration_id}",
+      path: {
+        organization_slug: data.organizationSlug,
+        event_slug: data.eventSlug,
+        registration_id: data.registrationId,
+      },
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Delete Event Registration Route
+   * @param data The data for the request.
+   * @param data.organizationSlug
+   * @param data.eventSlug
+   * @param data.registrationId
+   * @returns void Successful Response
+   * @throws ApiError
+   */
+  public static deleteEventRegistrationRoute(
+    data: EventsDeleteEventRegistrationRouteData,
+  ): CancelablePromise<EventsDeleteEventRegistrationRouteResponse> {
+    return __request(OpenAPI, {
+      method: "DELETE",
+      url: "/api/v1/orgs/{organization_slug}/e/{event_slug}/registrations/{registration_id}",
+      path: {
+        organization_slug: data.organizationSlug,
+        event_slug: data.eventSlug,
+        registration_id: data.registrationId,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Create Event Registration Route
+   * @param data The data for the request.
+   * @param data.organizationSlug
+   * @param data.eventSlug
+   * @param data.requestBody
+   * @returns EventRegistration Successful Response
+   * @throws ApiError
+   */
+  public static createEventRegistrationRoute(
+    data: EventsCreateEventRegistrationRouteData,
+  ): CancelablePromise<EventsCreateEventRegistrationRouteResponse> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/orgs/{organization_slug}/e/{event_slug}/registrations/",
+      path: {
+        organization_slug: data.organizationSlug,
+        event_slug: data.eventSlug,
+      },
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Read Event By Slug
+   * Fetch an event by its slug.
+   * @param data The data for the request.
+   * @param data.eventSlug
+   * @returns Event Successful Response
+   * @throws ApiError
+   */
+  public static readEventBySlug(
+    data: EventsReadEventBySlugData,
+  ): CancelablePromise<EventsReadEventBySlugResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/events/{event_slug}",
+      path: {
+        event_slug: data.eventSlug,
       },
       errors: {
         422: "Validation Error",
@@ -274,6 +502,122 @@ export class LoginService {
   }
 }
 
+export class OrganizationsService {
+  /**
+   * List Organizations Route
+   * @param data The data for the request.
+   * @param data.skip
+   * @param data.limit
+   * @returns OrganizationList Successful Response
+   * @throws ApiError
+   */
+  public static listOrganizationsRoute(
+    data: OrganizationsListOrganizationsRouteData = {},
+  ): CancelablePromise<OrganizationsListOrganizationsRouteResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/orgs/",
+      query: {
+        skip: data.skip,
+        limit: data.limit,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Create Organization Route
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns Organization Successful Response
+   * @throws ApiError
+   */
+  public static createOrganizationRoute(
+    data: OrganizationsCreateOrganizationRouteData,
+  ): CancelablePromise<OrganizationsCreateOrganizationRouteResponse> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/orgs/",
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Get Organization Route
+   * @param data The data for the request.
+   * @param data.organizationSlug
+   * @returns Organization Successful Response
+   * @throws ApiError
+   */
+  public static getOrganizationRoute(
+    data: OrganizationsGetOrganizationRouteData,
+  ): CancelablePromise<OrganizationsGetOrganizationRouteResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/orgs/{organization_slug}",
+      path: {
+        organization_slug: data.organizationSlug,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Update Organization Route
+   * @param data The data for the request.
+   * @param data.organizationSlug
+   * @param data.requestBody
+   * @returns Organization Successful Response
+   * @throws ApiError
+   */
+  public static updateOrganizationRoute(
+    data: OrganizationsUpdateOrganizationRouteData,
+  ): CancelablePromise<OrganizationsUpdateOrganizationRouteResponse> {
+    return __request(OpenAPI, {
+      method: "PUT",
+      url: "/api/v1/orgs/{organization_slug}",
+      path: {
+        organization_slug: data.organizationSlug,
+      },
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Delete Organization Route
+   * @param data The data for the request.
+   * @param data.organizationSlug
+   * @returns void Successful Response
+   * @throws ApiError
+   */
+  public static deleteOrganizationRoute(
+    data: OrganizationsDeleteOrganizationRouteData,
+  ): CancelablePromise<OrganizationsDeleteOrganizationRouteResponse> {
+    return __request(OpenAPI, {
+      method: "DELETE",
+      url: "/api/v1/orgs/{organization_slug}",
+      path: {
+        organization_slug: data.organizationSlug,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+}
+
 export class PrivateService {
   /**
    * Create User
@@ -289,6 +633,146 @@ export class PrivateService {
     return __request(OpenAPI, {
       method: "POST",
       url: "/api/v1/private/users/",
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+}
+
+export class SessionsService {
+  /**
+   * Read Sessions
+   * @param data The data for the request.
+   * @param data.organizationSlug
+   * @param data.eventSlug
+   * @param data.skip
+   * @param data.limit
+   * @returns Session Successful Response
+   * @throws ApiError
+   */
+  public static readSessions(
+    data: SessionsReadSessionsData,
+  ): CancelablePromise<SessionsReadSessionsResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/orgs/{organization_slug}/e/{event_slug}",
+      path: {
+        organization_slug: data.organizationSlug,
+        event_slug: data.eventSlug,
+      },
+      query: {
+        skip: data.skip,
+        limit: data.limit,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Read Session
+   * @param data The data for the request.
+   * @param data.organizationSlug
+   * @param data.eventSlug
+   * @param data.sessionSlug
+   * @returns Session Successful Response
+   * @throws ApiError
+   */
+  public static readSession(
+    data: SessionsReadSessionData,
+  ): CancelablePromise<SessionsReadSessionResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/orgs/{organization_slug}/e/{event_slug}/s/{session_slug}",
+      path: {
+        organization_slug: data.organizationSlug,
+        event_slug: data.eventSlug,
+        session_slug: data.sessionSlug,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Update Session Route
+   * @param data The data for the request.
+   * @param data.organizationSlug
+   * @param data.eventSlug
+   * @param data.sessionSlug
+   * @param data.requestBody
+   * @returns Session Successful Response
+   * @throws ApiError
+   */
+  public static updateSessionRoute(
+    data: SessionsUpdateSessionRouteData,
+  ): CancelablePromise<SessionsUpdateSessionRouteResponse> {
+    return __request(OpenAPI, {
+      method: "PUT",
+      url: "/api/v1/orgs/{organization_slug}/e/{event_slug}/s/{session_slug}",
+      path: {
+        organization_slug: data.organizationSlug,
+        event_slug: data.eventSlug,
+        session_slug: data.sessionSlug,
+      },
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Delete Session Route
+   * @param data The data for the request.
+   * @param data.organizationSlug
+   * @param data.eventSlug
+   * @param data.sessionSlug
+   * @returns void Successful Response
+   * @throws ApiError
+   */
+  public static deleteSessionRoute(
+    data: SessionsDeleteSessionRouteData,
+  ): CancelablePromise<SessionsDeleteSessionRouteResponse> {
+    return __request(OpenAPI, {
+      method: "DELETE",
+      url: "/api/v1/orgs/{organization_slug}/e/{event_slug}/s/{session_slug}",
+      path: {
+        organization_slug: data.organizationSlug,
+        event_slug: data.eventSlug,
+        session_slug: data.sessionSlug,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Submit Session Route
+   * @param data The data for the request.
+   * @param data.organizationSlug
+   * @param data.eventSlug
+   * @param data.requestBody
+   * @returns Session Successful Response
+   * @throws ApiError
+   */
+  public static submitSessionRoute(
+    data: SessionsSubmitSessionRouteData,
+  ): CancelablePromise<SessionsSubmitSessionRouteResponse> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/orgs/{organization_slug}/e/{event_slug}/submit",
+      path: {
+        organization_slug: data.organizationSlug,
+        event_slug: data.eventSlug,
+      },
       body: data.requestBody,
       mediaType: "application/json",
       errors: {
